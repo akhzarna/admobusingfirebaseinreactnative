@@ -14,6 +14,7 @@ import {
   View,
   Text,
   StatusBar,
+  Alert,
 } from 'react-native';
 
 import {
@@ -25,7 +26,7 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 
 
-import admob, { MaxAdContentRating, InterstitialAd, AdEventType, RewardedAd, BannerAd, TestIds, BannerAdSize } from '@react-native-firebase/admob';
+import admob, { MaxAdContentRating, InterstitialAd, AdEventType, RewardedAd, RewardedAdEventType, BannerAd, TestIds, BannerAdSize,AdMobRewarded } from '@react-native-firebase/admob';
 
 
 class App extends Component {
@@ -39,6 +40,7 @@ class App extends Component {
 
   componentDidMount(){
 
+    // Compulsory
     admob()
     .setRequestConfiguration({
       // Update all future requests suitable for parental guidance
@@ -54,6 +56,126 @@ class App extends Component {
     .then(() => {
       // Request config successfully set!
     });
+    // ......
+
+
+
+
+
+    // this.showInterstitialAd();
+    this.showRewardedAd();
+
+
+
+
+    // <PublisherBanner
+    //   adSize="fullBanner"
+    //   adUnitID="your-admob-unit-id"
+    //   testDevices={[PublisherBanner.simulatorId]}
+    //   onAdFailedToLoad={error => console.error(error)}
+    //   onAppEvent={event => console.log(event.name, event.info)}
+    // />
+
+    // Display a rewarded ad
+    // AdMobRewarded.setAdUnitID('ca-app-pub-9152919921144751/4388798738');
+    // AdMobRewarded.requestAd().then(() => AdMobRewarded.showAd());
+
+
+
+  PushNotification.configure({
+            // (optional) Called when Token is generated (iOS and Android)
+            onRegister: function(token) {
+              console.log("TOKEN:", token);
+            },
+          
+            // (required) Called when a remote or local notification is opened or received
+            onNotification: function(notification) {
+              console.log("NOTIFICATION:", notification);
+          
+              // process the notification here
+          
+              // required on iOS only 
+              notification.finish(PushNotificationIOS.FetchResult.NoData);
+            },
+            // Android only
+            senderID: "1090501687137",
+            // iOS only
+            permissions: {
+              alert: true,
+              badge: true,
+              sound: true
+            },
+            popInitialNotification: true,
+            requestPermissions: true
+          });
+
+          
+  }
+
+  showInterstitialAd = () => {
+
+    // Create a new instance
+    const interstitialAd = InterstitialAd.createForAdRequest('ca-app-pub-9152919921144751/8982703763');
+    // Add event handlers
+    interstitialAd.onAdEvent((type, error) => {
+        if (type === AdEventType.LOADED) {
+            interstitialAd.show();
+        }
+    });
+    // Load a new advert
+    interstitialAd.load();
+
+  }
+
+  showRewardedAd = () =>{
+    //  // Create a new instance
+    //  const myRewardedAd = RewardedAd.createForAdRequest("ca-app-pub-9152919921144751/1128032966");
+    //  // Add event handlers
+    //  myRewardedAd.onAdEvent((type, error, reward) => {
+    //      if (type === RewardedAdEventType.LOADED) {
+    //       myRewardedAd.show();
+    //      }
+
+    //      if (type === RewardedAdEventType.EARNED_REWARD) {
+    //       alert('Earned' + reward);
+    //      }
+
+    //  });
+    //  // Load a new advert
+    //  myRewardedAd.load();
+    //  // Rewarded
+    //  // RewardedAd.createForAdRequest(TestIds.REWARDED)
+
+
+    // Create a new instance
+    const rewardAd = RewardedAd.createForAdRequest("ca-app-pub-9152919921144751/1681856290",
+      {requestNonPersonalizedAdsOnly:true,
+      keywords:['fashion','clothing']}
+    );
+    // rewardAd
+    // Add event handlers
+    rewardAd.onAdEvent((type, error, reward) => {
+        if (type === RewardedAdEventType.LOADED) {
+            rewardAd.show();
+        }
+
+        if (type === RewardedAdEventType.EARNED_REWARD) {
+            
+            console.log('Rewards are = ',reward);
+            
+            // Alert.alert(
+            //     'Reward Ad',
+            //     'You just earned a reward of 5 lives',
+            //     [
+            //       {text: 'OK', onPress: () => console.log('OK Pressed')},
+            //     ],
+            //     { cancelable: true }
+            //   )
+        }
+    });
+
+    // Load a new advert
+    rewardAd.load();
   }
 
 
@@ -62,9 +184,10 @@ class App extends Component {
   return (
 
     <View style={{flex:0,marginTop:1,backgroundColor:'transparent',height:70,}}>
-
+    <Text> Testing Ads Are Working </Text>
+    
     <BannerAd size={BannerAdSize.SMART_BANNER}
-              unitId={'ca-app-pub-9152919921144751/8604842585'}>
+              unitId={'ca-app-pub-9152919921144751/3203053032'}>
     </BannerAd>
      </View>
 
